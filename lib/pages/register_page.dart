@@ -3,7 +3,8 @@ import 'package:social_media_app/components/button.dart';
 import 'package:social_media_app/components/text_field.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  final Function() onTap;
+  const RegisterPage({super.key, required this.onTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -88,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: 5,
                     ),
                     GestureDetector(
-                      onTap: () => {},
+                      onTap: widget.onTap,
                       child: const Text(
                         "Sign In",
                         style: TextStyle(
