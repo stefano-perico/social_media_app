@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/components/button.dart';
 import 'package:social_media_app/components/text_field.dart';
@@ -13,6 +15,23 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
+
+  // sign user in
+  signIn() async {
+    FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailTextController.text,
+      password: passwordTextController.text
+    ).then((value) {
+      // do something after signing in
+    }).catchError((error) {
+      // show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+        )
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +80,10 @@ class _LoginPageState extends State<LoginPage> {
                   height: 10,
                 ),
                 // sign in button
-                MyButton(onTap: () => {}, text: 'Sign In'),
+                MyButton(
+                  onTap: signIn,
+                  text: 'Sign In'
+                ),
                 const SizedBox(
                   height: 25,
                 ),
