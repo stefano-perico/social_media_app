@@ -17,6 +17,17 @@ class _LoginPageState extends State<LoginPage> {
 
   // sign user in
   signIn() async {
+    // show loading circle
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    );
+
+    // try to sign in
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailTextController.text,
@@ -27,9 +38,13 @@ class _LoginPageState extends State<LoginPage> {
       } else if (e.code == 'wrong-password') {
         displayMessage('Wrong password provided for that user.');
       }
+    } finally {
+      // hide loading circle
+      Navigator.pop(context);
     }
   }
 
+  // display message
   void displayMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
