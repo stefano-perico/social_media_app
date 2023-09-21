@@ -17,105 +17,101 @@ class _LoginPageState extends State<LoginPage> {
 
   // sign user in
   signIn() async {
-    FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailTextController.text,
-      password: passwordTextController.text
-    ).then((value) {
-      // do something after signing in
-    }).catchError((error) {
-      // show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-        )
-      );
-    });
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailTextController.text,
+          password: passwordTextController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        displayMessage('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        displayMessage('Wrong password provided for that user.');
+      }
+    }
+  }
+
+  void displayMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Center(child: Text(message)),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // logo
-                const Icon(
-                  Icons.lock,
-                  size: 100,
+        body: SafeArea(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // logo
+              const Icon(
+                Icons.lock,
+                size: 100,
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              // welcome back message
+              Text(
+                "Welcome Back!",
+                style: TextStyle(
+                  color: Colors.grey[700],
                 ),
-                const SizedBox(
-                  height: 50,
-                ),
-                // welcome back message
-                Text(
-                  "Welcome Back!",
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                // email textfield
-                MyTextField(
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              // email textfield
+              MyTextField(
                   controller: emailTextController,
                   hintText: 'Email',
-                  obscureText: false
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                // password textfield
-                MyTextField(
+                  obscureText: false),
+              const SizedBox(
+                height: 10,
+              ),
+              // password textfield
+              MyTextField(
                   controller: passwordTextController,
                   hintText: 'Password',
-                  obscureText: true
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                // sign in button
-                MyButton(
-                  onTap: signIn,
-                  text: 'Sign In'
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                // go to register page button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don't have an account?",
+                  obscureText: true),
+              const SizedBox(
+                height: 10,
+              ),
+              // sign in button
+              MyButton(onTap: signIn, text: 'Sign In'),
+              const SizedBox(
+                height: 25,
+              ),
+              // go to register page button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Don't have an account?",
                       style: TextStyle(
                         color: Colors.grey[700],
-                      )
+                      )),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  GestureDetector(
+                    onTap: widget.onTap,
+                    child: const Text(
+                      "Sign Up",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.blue),
                     ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    GestureDetector(
-                      onTap: widget.onTap,
-                      child: const Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-      )
-    );
+      ),
+    ));
   }
 }
